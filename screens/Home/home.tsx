@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, SectionList } from "react-native";
+import { ScrollView } from "react-native";
 import {
   Containers,
   BackgroundName,
@@ -15,31 +15,44 @@ import {
 
 import pokemon from "../../assets/images/pokemon.png";
 import axios from "axios";
-const arr = new Array()
 
 
-const Home: React.FC = () => {
-  const [name, setName] = useState();
-  const [avatar, setAvatar] = useState();
-  const schema = {
-    name,
-    avatar
-  }
-  arr.push(schema)
+export type Props = { 
+  id: string,
+  name: string,
+  avatar: string
+}
+let list: Array<Props> = []
+
+
+const Home = ({ Props }) => {
+  const [schema, setSchema] = useState(Props)
 
   useEffect(() => {
-    const getAxios = async () => {
-      const response = await axios.get("https://pokeapi.co/api/v2/pokemon/");
-      for (let i in response.data.results) {
-        setName(response.data.results[i].name);
-        const responseUrl = await axios.get(response.data.results[i].url);
+    const axiosReq = async () => {
+      try {
+        const response = await axios.get("https://pokeapi.co/api/v2/pokemon/");
 
-        setAvatar(responseUrl.data["sprites"]["front_default"]);
+        response.data["results"].map(
+          async (item: {
+            name: string;
+            url: string;
+          }) => {
+            const requestImageUrl = await axios.get(item.url);
+            const _id =  Math.random().toString(16).slice(2) + Date.now().toString(16).slice(4) 
+
+            setSchema({id: _id, name: item.name, avatar: requestImageUrl.data.sprites.front_default})
+          }
+        );
+      } catch (e) {
+        console.log(e);
       }
     };
-
-    getAxios();
+    axiosReq();
   }, []);
+
+
+  list.push(schema)
 
 
   return (
@@ -55,22 +68,22 @@ const Home: React.FC = () => {
         <Contents>
           <PokemonContainers>
             {
-              arr.map(items => {
+              list.map(items => {
                 return (
-                  <PokemonContents>
-                  <Avatar key={items.avatar}
+                  <PokemonContents >
+                  <Avatar 
+                    key={items.id}
                     source={{
                       uri: items.avatar,
                     }}
                   />
                   <BackgroundName>
-                    <PokemonName key={items.name}>{items.name}</PokemonName>
+                    <PokemonName key={items.id} >{items.name}</PokemonName>
                   </BackgroundName>
                 </PokemonContents>
                 )
               })
             }
-       
           </PokemonContainers>
         </Contents>
       </ScrollView>
