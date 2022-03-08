@@ -48,10 +48,7 @@ const Home = ({ Props }) => {
     console.log(e);
   }
 
-  
-    list.push(schema);
-
-
+  list.push(schema);
 
   return (
     <Containers>
@@ -66,19 +63,21 @@ const Home = ({ Props }) => {
         <Contents>
           <PokemonContainers>
             {list.map((items) => {
-              if(typeof items === 'undefined'){
-                return 
+              if (typeof items === "undefined") {
+                return;
               }
               return (
-                <PokemonContents key={Math.random().toString(16).slice(2)}>
+                <PokemonContents key={items.id}>
                   <Avatar
-                    key={Math.random().toString(16).slice(2)}
+                    key={items.id}
                     source={{
                       uri: items.avatar,
                     }}
                   />
                   <BackgroundName>
-                    <PokemonName key={Math.random().toString(16).slice(2)}>{items.name}</PokemonName>
+                    <PokemonName key={items.id}>
+                      {items.name}
+                    </PokemonName>
                   </BackgroundName>
                 </PokemonContents>
               );
