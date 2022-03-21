@@ -1,9 +1,9 @@
 import React from "react";
 import { Text, Pressable, ImageBackground, View } from "react-native";
-import { RootTabScreenProps } from "../../types";
+import { RootTabScreenProps } from "../../../types";
 import { Button, Container, Content, Input, Image } from "./styled";
-import img from "../../assets/images/img.png";
-import pokemon from "../../assets/images/pokemon.png";
+import img from "../../../assets/images/img.png";
+import pokemon from "../../../assets/images/pokemon.png";
 
 const Login = ({ navigation }: RootTabScreenProps<any>) => {
   return (

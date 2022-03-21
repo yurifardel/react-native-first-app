@@ -1,9 +1,9 @@
-import useCachedResources from "./hooks/useCachedResources";
+import useCachedResources from "./src/hooks/useCachedResources";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import Home from "./screens/Home/home";
-import Login from "./screens/Login/login";
+import Home from "./src/screens/Home/home";
+import Login from "./src/screens/Login/login";
 
 const Stack = createNativeStackNavigator();
 
