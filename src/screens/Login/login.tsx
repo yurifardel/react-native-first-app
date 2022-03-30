@@ -1,9 +1,19 @@
 import React from "react";
-import { Text, Pressable, ImageBackground, View } from "react-native";
+import {
+  Text,
+  Pressable,
+  ImageBackground,
+  View,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
+} from "react-native";
 import { RootTabScreenProps } from "../../../types";
-import { Button, Container, Content, Input, Image } from "./styled";
+import { Container, Content, Image } from "./styled";
+import InputComponent from "../components/Input/input";
 import img from "../../../assets/images/img.png";
 import pokemon from "../../../assets/images/pokemon.png";
+import ButtonComponent from "../components/Button/button";
 
 const Login = ({ navigation }: RootTabScreenProps<any>) => {
   return (
@@ -13,24 +23,26 @@ const Login = ({ navigation }: RootTabScreenProps<any>) => {
       style={{ flex: 1, justifyContent: "center" }}
     >
       <Image source={pokemon} />
-      <Container>
-        <Content>
-          <Text style={{ fontSize: 34 }}>Bem-vindo</Text>
-          <Text style={{ marginBottom: 100, fontSize: 14 }}>
-            Insira os seus dados para acessar
-          </Text>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Container>
+          <Content>
+            <Text style={{ fontSize: 34 }}>Bem-vindo</Text>
+            <Text style={{ marginBottom: 100, fontSize: 14 }}>
+              Insira os seus dados para acessar
+            </Text>
 
-          <View style={{ position: "relative", bottom: 40 }}>
-            <Input />
-            <Input />
-          </View>
-          <Pressable onPress={() => navigation.navigate("Home")}>
-            <Button>
-              <Text style={{ color: "white", fontSize: 20 }}>Entrar</Text>
-            </Button>
-          </Pressable>
-        </Content>
-      </Container>
+            <View style={{ position: "relative", bottom: 40 }}>
+              <KeyboardAvoidingView behavior="position" enabled>
+                <InputComponent />
+                <InputComponent />
+              </KeyboardAvoidingView>
+            </View>
+            <Pressable onPress={() => navigation.navigate("Home")}>
+              <ButtonComponent text={"Enter"} />
+            </Pressable>
+          </Content>
+        </Container>
+      </TouchableWithoutFeedback>
     </ImageBackground>
   );
 };

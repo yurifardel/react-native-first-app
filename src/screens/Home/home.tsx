@@ -1,25 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { ScrollView } from "react-native";
+import React, { Fragment, useEffect, useState } from "react";
+import { Modal, Pressable, ScrollView, View, Text, Image } from "react-native";
 import {
   Containers,
   BackgroundName,
   PokemonName,
-  SearchContents,
+  HeadContents,
   Contents,
   PokemonContainers,
   PokemonContents,
   Logo,
-  TextInput,
   Avatar,
+  LoadMore,
+  Card,
 } from "./styled";
 
 import pokemonIMG from "../../../assets/images/pokemon.png";
+import { backgroundColors } from "../components/Colors/colors";
+import SearchComponent from "../components/Search/search";
+
+type mapProps = {
+  name: string;
+  sprites: {
+    front_default: string;
+  };
+  types: {
+    name: string;
+  };
+};
 
 const Home: React.FC = () => {
   const [allPokemon, setAllPokemon] = useState<any>([]);
   const [load, setLoad] = useState<string>(
     "https://pokeapi.co/api/v2/pokemon?limit=20"
   );
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [data, setData] = useState<any>({});
 
   const getAllPokemon = async () => {
     const request = await fetch(load);
@@ -27,7 +42,7 @@ const Home: React.FC = () => {
 
     setLoad(data.next);
 
-    function pokemonObject(results: any[]) {
+    function pokemonObject(results: [{ pokemon: object; name: string }]) {
       results.forEach(async (pokemon) => {
         const request = await fetch(
           `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
@@ -35,7 +50,9 @@ const Home: React.FC = () => {
         const dataDetails = await request.json();
 
         setAllPokemon((current: []) => [...current, dataDetails]);
-        await allPokemon.sort((a: { id: number }, b: { id: number }) => a.id - b.id)
+        await allPokemon.sort(
+          (a: { id: number }, b: { id: number }) => a.id - b.id
+        );
       });
     }
 
@@ -46,38 +63,99 @@ const Home: React.FC = () => {
     getAllPokemon();
   }, []);
 
-  if (!allPokemon) {
-    return null;
-  }
-
   return (
     <Containers>
       <ScrollView
         automaticallyAdjustContentInsets={true}
         contentContainerStyle={{ backgroundColor: "#E5E5E5" }}
       >
-        <SearchContents>
+        <HeadContents>
           <Logo source={pokemonIMG} />
-          <TextInput placeholder="Buscar pokemon" />
-        </SearchContents>
+          <SearchComponent />
+        </HeadContents>
         <Contents>
           <PokemonContainers>
-            {allPokemon.map((pokemon: any, index: number) => {
+            {allPokemon.map((pokemon: mapProps, index: number) => {
               return (
-                <PokemonContents key={index}>
-                  <Avatar
-                    key={index}
-                    source={{
-                      uri: pokemon.sprites.front_default,
+                <Fragment key={index}>
+                  <Pressable
+                    onPress={() => {
+                      setData(pokemon);
+                      setModalVisible(true);
                     }}
-                  />
-                  <BackgroundName>
-                    <PokemonName key={index}>{pokemon.name}</PokemonName>
-                  </BackgroundName>
-                </PokemonContents>
+                  >
+                    <PokemonContents
+                      key={index}
+                      style={{
+                        backgroundColor:
+                          backgroundColors[pokemon.types[0].type.name],
+                      }}
+                    >
+                      <Avatar
+                        key={index}
+                        source={{
+                          uri: pokemon.sprites.front_default,
+                        }}
+                      />
+                      <BackgroundName>
+                        <PokemonName key={index}>{pokemon.name}</PokemonName>
+                      </BackgroundName>
+                    </PokemonContents>
+                  </Pressable>
+                </Fragment>
               );
             })}
+
+            {(function mood() {
+              if (modalVisible) {
+                return (
+                  <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => setModalVisible(!modalVisible)}
+                  >
+                    <View
+                      style={{
+                        flex: 1,
+                        backgroundColor: "#c5c9d1",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Pressable onPress={() => setModalVisible(!modalVisible)}>
+                        <Text
+                          style={{
+                            position: "relative",
+                            bottom: 50,
+                            fontSize: 30,
+                            fontWeight: "bold",
+                            color: "#000000",
+                            padding: 10,
+                          }}
+                        >
+                          x
+                        </Text>
+                      </Pressable>
+                      <Card>
+                        <Avatar
+                          source={{
+                            uri: data.sprites.front_default,
+                          }}
+                        />
+                        <Text>{data.name}</Text>
+                      </Card>
+                    </View>
+                  </Modal>
+                );
+              }
+            })()}
           </PokemonContainers>
+          <Pressable onPress={() => getAllPokemon()}>
+            <LoadMore>
+              <Text style={{ color: "#ffff" }}>Load More</Text>
+            </LoadMore>
+          </Pressable>
         </Contents>
       </ScrollView>
     </Containers>
