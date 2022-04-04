@@ -1,44 +1,38 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { View, Text } from "react-native";
-import { TextInput } from "./styled";
+import React, { useContext, useState } from "react";
+import { ScrollView } from "react-native";
+import { AppContext } from "../../../context/context-app";
+import { Container, TextInput, Text, Box } from "./styled";
 
-const SearchComponent = () => {
+const Filter = () => {
+  const { user } = useContext(AppContext);
   const [search, setSearch] = useState<string>("");
-  const [pokemons, setPokemons] = useState<[]>([]);
 
   const searchPokemon = search && search.toLowerCase();
 
-  const filtered = pokemons.filter((data: { name: string }) =>
+  const filtered = user.filter((data: { name: string }) =>
     data.name.toLowerCase().includes(searchPokemon)
   );
 
-  const getPokemon = async () => {
-    const request = await fetch("https://pokeapi.co/api/v2/pokemon?limit=20");
-    const data = await request.json();
-
-    setPokemons(data.results);
-  };
-
-  useEffect(() => {
-    getPokemon();
-  }, []);
-
   return (
-    <Fragment>
+    <>
       <TextInput
         placeholder="Buscar pokemon"
         value={search}
         onChangeText={(search) => setSearch(search)}
       />
-      {search ? (
-        <View>
-          {filtered.map(({ name }, index) => {
-            return <Text key={index}>{name}</Text>;
-          })}
-        </View>
-      ) : null}
-    </Fragment>
+      <Box>
+        {search
+          ? filtered.map(({ name }, index) => {
+              return (
+                <Container key={index}>
+                  <Text key={index}>{name}</Text>
+                </Container>
+              );
+            })
+          : null}
+      </Box>
+    </>
   );
 };
 
-export default SearchComponent;
+export default Filter;

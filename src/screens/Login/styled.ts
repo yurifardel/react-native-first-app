@@ -10,14 +10,17 @@ export const Image = styled.Image`
   resize-mode: stretch
   align-self: center
   position: relative
-  bottom: 45px
+  top: 20px
 `;
 
 export const Content = styled.View`
   background-color: white;
+  opacity: 0.90;
   justify-content: center;
   padding: 20px;
   margin: 15px;
   height: 450px;
   border-radius: 10px;
+  position: relative
+  top: 60px
 `;
